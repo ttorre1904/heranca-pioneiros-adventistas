@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Herança dos Pioneiros Adventistas</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a1a2e">
@@ -31,8 +31,8 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -42,21 +42,41 @@
   #menu {
     display: flex;
     flex-direction: column;
+    height: 100%;
+  }
+
+  .menu-header {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 10px;
+    padding: max(20px, env(safe-area-inset-top)) 20px 10px;
+    flex-shrink: 0;
+  }
+
+  .menu-scroll {
     flex: 1;
-    padding: 32px 24px;
-    gap: 16px;
     overflow-y: auto;
+    padding: 4px 20px 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .menu-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px max(20px, env(safe-area-inset-bottom));
+    flex-shrink: 0;
+    background: linear-gradient(to top, var(--bg) 80%, transparent);
   }
 
   .logo {
-    font-size: 48px;
-    margin-bottom: 4px;
+    font-size: 40px;
   }
 
   .app-title {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     text-align: center;
     line-height: 1.3;
@@ -64,16 +84,15 @@
   }
 
   .app-subtitle {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-dim);
     text-align: center;
-    margin-bottom: 8px;
   }
 
   .stats-bar {
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 16px 24px;
+    padding: 12px 20px;
     display: flex;
     gap: 24px;
     width: 100%;
@@ -86,7 +105,7 @@
   }
 
   .stat-num {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 700;
   }
 
@@ -98,15 +117,23 @@
   }
 
   .stat-num.green { color: var(--success); }
-  .stat-num.blue { color: var(--accent2); }
-  .stat-num.gold { color: var(--gold); }
+  .stat-num.blue  { color: var(--gold); }
+  .stat-num.gold  { color: var(--accent2); }
+
+  .cat-section-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
 
   .category-list {
     width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
   }
 
   .category-item {
@@ -161,8 +188,8 @@
   .btn:active { transform: scale(0.97); }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--accent), #c0392b);
-    color: white;
+    background: linear-gradient(135deg, var(--gold), #d4891a);
+    color: #1a1a2e;
   }
 
   .btn-secondary {
@@ -181,12 +208,12 @@
     display: none;
     flex-direction: column;
     height: 100vh;
-    height: -webkit-fill-available;
+    height: 100dvh;
   }
 
   .game-header {
     background: var(--surface);
-    padding: 12px 16px;
+    padding: max(14px, env(safe-area-inset-top)) 16px 12px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -226,7 +253,7 @@
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    background: linear-gradient(90deg, var(--gold), var(--accent2));
     border-radius: 3px;
     transition: width 0.4s ease;
   }
@@ -247,9 +274,9 @@
   .card-area {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
-    padding: 16px;
+    padding: 12px 16px;
     overflow: hidden;
   }
 
@@ -258,14 +285,13 @@
     max-width: 480px;
     background: var(--card);
     border-radius: 20px;
-    min-height: 300px;
     display: flex;
     flex-direction: column;
     padding: 24px;
     gap: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     overflow-y: auto;
-    max-height: calc(100vh - 220px);
+    -webkit-overflow-scrolling: touch;
   }
 
   .card-type {
@@ -320,7 +346,7 @@
 
   /* ── ACTION BUTTONS ── */
   .action-area {
-    padding: 12px 16px 20px;
+    padding: 12px 16px max(20px, env(safe-area-inset-bottom));
     flex-shrink: 0;
     display: flex;
     gap: 10px;
@@ -360,8 +386,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    padding: 40px 24px;
+    height: 100vh;
+    height: 100dvh;
+    padding: max(40px, env(safe-area-inset-top)) 24px max(40px, env(safe-area-inset-bottom));
     gap: 20px;
     text-align: center;
   }
@@ -400,30 +427,35 @@
 
 <!-- MENU -->
 <div id="menu">
-  <div class="logo">✝️</div>
-  <div class="app-title">Herança dos Pioneiros Adventistas</div>
-  <div class="app-subtitle">Estuda a história do movimento adventista</div>
-
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-num blue" id="stat-total">0</div>
-      <div class="stat-label">No Deck</div>
+  <div class="menu-header">
+    <div class="logo">✝️</div>
+    <div class="app-title">Herança dos Pioneiros Adventistas</div>
+    <div class="app-subtitle">Estuda a história do movimento adventista</div>
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num blue" id="stat-total">0</div>
+        <div class="stat-label">No Deck</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num green" id="stat-done">0</div>
+        <div class="stat-label">Acertadas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num gold" id="stat-pct">0%</div>
+        <div class="stat-label">Progresso</div>
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat-num green" id="stat-done">0</div>
-      <div class="stat-label">Acertadas</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num gold" id="stat-pct">0%</div>
-      <div class="stat-label">Progresso</div>
-    </div>
+    <div class="cat-section-label">Categorias</div>
   </div>
 
-  <div style="font-size:13px; color:var(--text-dim); width:100%; max-width:400px;">Categorias:</div>
-  <div class="category-list" id="cat-list"></div>
+  <div class="menu-scroll">
+    <div class="category-list" id="cat-list"></div>
+  </div>
 
-  <button class="btn btn-primary" id="btn-start">Começar a Estudar</button>
-  <button class="btn btn-secondary" id="btn-reset">Repor todas as cartas no deck</button>
+  <div class="menu-footer">
+    <button class="btn btn-primary" id="btn-start">Começar a Estudar</button>
+    <button class="btn btn-secondary" id="btn-reset">Repor todas as cartas no deck</button>
+  </div>
 </div>
 
 <!-- GAME -->
