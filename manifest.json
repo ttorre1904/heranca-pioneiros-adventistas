@@ -1,0 +1,21 @@
+{
+  "name": "Herança dos Pioneiros Adventistas",
+  "short_name": "Pioneiros",
+  "description": "Jogo de flashcards sobre a história do movimento adventista",
+  "start_url": "/heranca-pioneiros-adventistas/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
