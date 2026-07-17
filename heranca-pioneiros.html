@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Herança dos Pioneiros Adventistas</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --card: #0f3460;
+    --accent: #e94560;
+    --accent2: #4a9eff;
+    --gold: #f5a623;
+    --text: #eaeaea;
+    --text-dim: #9aabb5;
+    --success: #27ae60;
+    --danger: #e74c3c;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── MENU ── */
+  #menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 32px 24px;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .logo {
+    font-size: 48px;
+    margin-bottom: 4px;
+  }
+
+  .app-title {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.3;
+    color: var(--gold);
+  }
+
+  .app-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .stats-bar {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    max-width: 400px;
+    justify-content: space-around;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-num.green { color: var(--success); }
+  .stat-num.blue { color: var(--accent2); }
+  .stat-num.gold { color: var(--gold); }
+
+  .category-list {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .category-item {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    user-select: none;
+  }
+
+  .category-item.selected {
+    border-color: var(--accent2);
+  }
+
+  .category-item input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent2);
+    cursor: pointer;
+  }
+
+  .cat-info { flex: 1; margin-left: 12px; }
+  .cat-name { font-size: 14px; font-weight: 600; }
+  .cat-count { font-size: 12px; color: var(--text-dim); }
+
+  .cat-badge {
+    font-size: 11px;
+    background: var(--card);
+    border-radius: 8px;
+    padding: 2px 8px;
+    color: var(--text-dim);
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    user-select: none;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #c0392b);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-dim);
+    border: 1px solid #333;
+  }
+
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ── GAME ── */
+  #game {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+
+  .game-header {
+    background: var(--surface);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+
+  .progress-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .progress-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .category-tag {
+    font-size: 11px;
+    background: var(--card);
+    border-radius: 8px;
+    padding: 4px 10px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+
+  /* ── CARD AREA ── */
+  .card-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  .flashcard {
+    width: 100%;
+    max-width: 480px;
+    background: var(--card);
+    border-radius: 20px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+  }
+
+  .card-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .card-question {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .tap-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-align: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .card-answer {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    padding-top: 16px;
+    margin-top: 8px;
+  }
+
+  .answer-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent2);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .answer-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #d0e8f0;
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .action-area {
+    padding: 12px 16px 20px;
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+  }
+
+  .action-area .btn {
+    max-width: none;
+    padding: 14px 12px;
+    font-size: 15px;
+  }
+
+  .btn-wrong {
+    background: rgba(231, 76, 60, 0.2);
+    color: var(--danger);
+    border: 1.5px solid var(--danger);
+    flex: 1;
+  }
+
+  .btn-correct {
+    background: rgba(39, 174, 96, 0.2);
+    color: var(--success);
+    border: 1.5px solid var(--success);
+    flex: 2;
+  }
+
+  .btn-show {
+    background: linear-gradient(135deg, var(--accent2), #2980b9);
+    color: white;
+    flex: 1;
+    width: 100%;
+    max-width: none;
+  }
+
+  /* ── COMPLETED SCREEN ── */
+  #completed {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: 40px 24px;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .trophy { font-size: 80px; }
+
+  .completed-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .completed-sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    max-width: 320px;
+  }
+
+  /* ── SHUFFLE ANIMATION ── */
+  .flashcard.animate-in {
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- MENU -->
+<div id="menu">
+  <div class="logo">✝️</div>
+  <div class="app-title">Herança dos Pioneiros Adventistas</div>
+  <div class="app-subtitle">Estuda a história do movimento adventista</div>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num blue" id="stat-total">0</div>
+      <div class="stat-label">No Deck</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num green" id="stat-done">0</div>
+      <div class="stat-label">Acertadas</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num gold" id="stat-pct">0%</div>
+      <div class="stat-label">Progresso</div>
+    </div>
+  </div>
+
+  <div style="font-size:13px; color:var(--text-dim); width:100%; max-width:400px;">Categorias:</div>
+  <div class="category-list" id="cat-list"></div>
+
+  <button class="btn btn-primary" id="btn-start">Começar a Estudar</button>
+  <button class="btn btn-secondary" id="btn-reset">Repor todas as cartas no deck</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="game-header">
+    <button class="back-btn" id="btn-back">←</button>
+    <div class="progress-wrap">
+      <div class="progress-text">
+        <span id="prog-text">Carta 1 de 10</span>
+        <span id="prog-remain"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+    <div class="category-tag" id="cur-cat"></div>
+  </div>
+
+  <div class="card-area">
+    <div class="flashcard animate-in" id="flashcard">
+      <div class="card-type" id="card-type"></div>
+      <div class="card-question" id="card-question"></div>
+      <div class="tap-hint" id="tap-hint">Toca para ver a resposta</div>
+      <div class="card-answer" id="card-answer" style="display:none">
+        <div class="answer-label">Resposta</div>
+        <div class="answer-text" id="answer-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-area" id="action-area">
+    <button class="btn btn-show" id="btn-show">Ver Resposta</button>
+  </div>
+</div>
+
+<!-- COMPLETED -->
+<div id="completed">
+  <div class="trophy">🏆</div>
+  <div class="completed-title">Parabéns!</div>
+  <div class="completed-sub">Respondeste a todas as cartas! Podes recomeçar para voltares a colocar todas no deck.</div>
+  <button class="btn btn-primary" id="btn-restart" style="max-width:320px">Recomeçar do Zero</button>
+  <button class="btn btn-secondary" id="btn-menu-from-complete" style="max-width:320px">Voltar ao Menu</button>
+</div>
+
+<script>
+// ──────────────────────────────────────────────
+// FLASHCARD DATA
+// ──────────────────────────────────────────────
+const cards = [
+
+  // CATEGORIA 1: ORIGENS
+  { cat: "Origens", q: "O que foi o Segundo Grande Despertamento e qual a sua relação com o surgimento do Movimento Millerita?", a: "Foi um período de intenso fervor evangelístico e expectativas escatológicas na América do século XIX. William Miller surgiu neste contexto, pregando que Cristo regressaria por volta de 1843-1844 com base nas profecias de Daniel. O Movimento Millerita cresceu através de camp meetings, publicações e pregadores itinerantes, atraindo milhares de crentes de diversas denominações protestantes." },
+  { cat: "Origens", q: "Quem foi William Miller e qual o seu papel no surgimento da Igreja Adventista?", a: "William Miller (1782-1849) foi um fazendeiro batista de Low Hampton, Nova York. Converteu-se em 1816 e, após intenso estudo bíblico, usou o princípio 'dia-ano' e Daniel 8:14 para calcular que Cristo viria por volta de 1843-1844. A partir de 1831 pregou publicamente, gerando o Movimento Millerita — que, após o Grande Desapontamento, deu origem à Igreja Adventista do Sétimo Dia." },
+  { cat: "Origens", q: "O que foi o Grande Desapontamento e quando ocorreu?", a: "Ocorreu a 22 de outubro de 1844. Samuel Snow propôs esta data específica para a Segunda Vinda de Cristo ('Clamor da Meia-Noite'). Quando Cristo não apareceu, o evento ficou conhecido como o Grande Desapontamento. Muitos abandonaram a fé, mas um grupo remanescente voltou a estudar as Escrituras e chegou a uma nova interpretação teológica." },
+  { cat: "Origens", q: "Qual foi a nova interpretação dada ao Grande Desapontamento com base em Daniel 8:14?", a: "Hiram Edson, Owen Crosier e Franklin Hall desenvolveram a doutrina do Santuário Celestial: Miller estava correto quanto à data (1844), mas errado quanto ao evento. Em 22 de outubro de 1844, Cristo não veio à Terra — em vez disso, entrou no Lugar Santíssimo do santuário celestial para iniciar o 'juízo investigativo', a obra de purificação antes da Sua Segunda Vinda." },
+  { cat: "Origens", q: "Qual foi o papel de Joseph Bates na introdução do Sábado ao movimento adventista?", a: "Joseph Bates, ex-capitão marítimo e millerita, foi a Washington, New Hampshire, onde estudou com adventistas do sétimo dia e aceitou o quarto mandamento. Em 1846 publicou o panfleto 'The Seventh-day Sabbath, a Perpetual Sign', introduzindo esta doutrina a James e Ellen White. A observância do sábado tornou-se um distintivo fundamental da identidade adventista." },
+  { cat: "Origens", q: "Quando e como foi oficialmente organizada a Igreja Adventista do Sétimo Dia?", a: "Em 1860 foi adotado o nome 'Adventistas do Sétimo Dia'. A 21 de maio de 1863, a Conferência Geral foi oficialmente organizada em Battle Creek, Michigan, com John Byington como primeiro presidente. James White foi crucial neste processo, estabelecendo publicações e promovendo conferências para unificar crenças e práticas." },
+
+  // CATEGORIA 2: PIONEIROS
+  { cat: "Pioneiros", q: "Quem foi Joseph Bates e porque é chamado 'Capitão da Fé'?", a: "Joseph Bates (1792-1872) foi ex-capitão de mar, abolicionista e pioneiro da temperança, e o mais idoso dos três principais cofundadores da Igreja Adventista. Foi o grande apóstolo do Sábado do sétimo dia, tendo publicado o livrete seminal 'The Seventh-day Sabbath, a Perpetual Sign' (1846), introduzindo esta doutrina crucial a James e Ellen White, moldando para sempre a identidade adventista." },
+  { cat: "Pioneiros", q: "Quem foi Hiram Edson e qual a sua contribuição teológica?", a: "Hiram Edson (1806-1882) foi um dedicado agricultor millerita de Port Gibson, Nova Iorque. Na manhã seguinte ao Desapontamento (23 de outubro de 1844), atravessando um milheiral, teve um vislumbre espiritual: compreendeu que em 1844 Cristo entrou no Lugar Santíssimo do Santuário Celestial para iniciar o juízo investigativo. Esta revelação tornou-se a coluna teológica do adventismo." },
+  { cat: "Pioneiros", q: "Quem foram A.T. Jones e E.J. Waggoner e qual o seu papel na Conferência de 1888?", a: "Na Conferência Geral de Minneapolis (1888), estes jovens pastores pregaram com fervor a 'Justificação pela Fé' e a centralidade da justiça de Cristo, desafiando o legalismo da época. Ellen White apoiou firmemente a sua mensagem, declarando que ela trazia o verdadeiro evangelho de volta ao coração da mensagem dos três anjos. Waggoner era médico e editor; Jones era estudioso de história e profecias." },
+  { cat: "Pioneiros", q: "Quem foi William Miller (Guilherme Miller)?", a: "William Miller (1782-1849) foi o grande reformador e pregador americano cujo estudo rigoroso das profecias bíblicas deu origem ao Movimento Millerita nas décadas de 1830 e 1840. Usando Daniel 8:14, calculou que Jesus regressaria por volta de 1843-1844. Embora tenha errado quanto à natureza do evento, o reavivamento gerado pela sua pregação reuniu milhares de crentes e preparou o terreno espiritual de onde nasceu a Igreja Adventista." },
+  { cat: "Pioneiros", q: "Quem foi James White e qual o seu papel na fundação da Igreja Adventista?", a: "James White foi um líder nato e grande arquiteto institucional da Igreja Adventista. Casou-se com Ellen Harmon em 1846 e fundou as primeiras publicações oficiais da Igreja (Review and Herald, Youth's Instructor). Lutou pela criação de uma estrutura eclesiástica formal (a Conferência Geral), garantindo que o movimento tivesse uma base sólida para cumprir a sua missão global." },
+  { cat: "Pioneiros", q: "Quem foi George King e qual a sua contribuição?", a: "George King (1847-1906) é considerado o pioneiro da obra de colportagem na Igreja Adventista. Em 1880, sugeriu que os livros adventistas fossem vendidos de porta em porta. O sucesso do seu método provou que a página impressa seria um dos maiores veículos de evangelização, transformando a colportagem numa das especialidades e ministérios mais ativos em todo o mundo." },
+  { cat: "Pioneiros", q: "Quem foi Anna Knight e porque é historicamente notável?", a: "Anna Knight (1874-1972) foi uma pioneira extraordinária: a primeira missionária adventista afro-americana e a primeira mulher negra enviada pela Igreja para o campo missionário internacional (servindo na Índia entre 1901 e 1906). Ao regressar aos EUA, fundou escolas auto-sustentáveis no Sul do país, enfrentando enormes barreiras raciais." },
+  { cat: "Pioneiros", q: "Quem foi Rachel Oakes Preston e qual o seu papel na adoção do Sábado?", a: "Rachel Oakes Preston (1809-1868) era crente da Igreja Batista do Sétimo Dia. Em 1844, mudou-se para Washington, New Hampshire, e desafiou o pastor millerita Frederick Wheeler a guardar todos os mandamentos de Deus, incluindo o quarto. O seu testemunho convenceu Wheeler e o grupo millerita local, plantando a semente da guarda do Sábado que viria a dar origem ao nome 'Adventista do Sétimo Dia'." },
+  { cat: "Pioneiros", q: "Quem foi Uriah Smith e qual a sua obra mais importante?", a: "Uriah Smith (1832-1903) foi escritor, editor e inventor que dedicou mais de 50 anos à revista Review and Herald. A sua obra-prima 'As Profecias de Daniel e o Apocalipse' tornou-se o manual clássico de interpretação profética da Igreja por gerações. Embora tenha inicialmente resistido à mensagem de 1888, demonstrou humildade ao retratar-se publicamente mais tarde." },
+  { cat: "Pioneiros", q: "Quem foi Luther Warren e qual a sua contribuição para a juventude adventista?", a: "Luther Warren (1864-1940) fundou, em 1879, com apenas 14 anos e juntamente com o amigo Harry Fenner, a primeira Sociedade de Jovens na Igreja Adventista, em Hazelton, Michigan. Organizou reuniões de oração, temperança e evangelismo. Este passo inicial é reconhecido historicamente como o nascimento oficial do Ministério de Jovens, que deu origem aos clubes de Tições, Exploradores e Desbravadores." },
+  { cat: "Pioneiros", q: "Quem foi A.G. Daniells e qual o seu papel na reorganização da Igreja?", a: "Arthur Grosvenor Daniells (1858-1936) foi o presidente da Conferência Geral que mais tempo permaneceu no cargo (1901-1922). Teve papel crucial na reorganização administrativa de 1901, que descentralizou a liderança da Igreja através da criação das Uniões, permitindo a expansão da missão global. Liderou também a transferência da sede de Battle Creek para Washington, D.C." },
+  { cat: "Pioneiros", q: "Quem foi W.H. Anderson e onde serviu como missionário?", a: "William Harrison Anderson (1870-1950) foi um dos maiores pioneiros missionários adventistas em África. Em 1895 ajudou a estabelecer a Missão de Solusi (atual Zimbábue), em terras cedidas por Cecil Rhodes. Dedicou a sua vida a desbravar o continente africano — enfrentando malária e condições extremas — para estabelecer escolas, centros médicos e expandir a mensagem do advento em regiões como a Zâmbia e Angola." },
+  { cat: "Pioneiros", q: "Quem foi J.N. Anderson e qual a sua contribuição para a Ásia?", a: "Jacob Nelson Anderson foi o primeiro missionário oficial adventista enviado para a China, chegando em 1902 acompanhado da família e Ida Thompson. Foi responsável por estruturar a missão organizada no território chinês, batizar os primeiros conversos locais e lançar as bases para a tradução e publicação de literatura adventista na Ásia Oriental." },
+  { cat: "Pioneiros", q: "Quem foi W.W. Prescott e qual o seu papel na educação adventista?", a: "William Warren Prescott (1855-1944) foi um dos educadores mais brilhantes do início do movimento, servindo como o primeiro presidente do Battle Creek College e ajudando a estruturar o sistema escolar adventista mundial. Teve papel marcante na consolidação da teologia cristocêntrica após 1888, enfatizando a Trindade e a pré-existência eterna de Cristo." },
+  { cat: "Pioneiros", q: "Quem foi John Byington e qual o seu significado histórico?", a: "John Byington foi o primeiro presidente da Conferência Geral dos Adventistas do Sétimo Dia, eleito na assembleia fundadora de 21 de maio de 1863 em Battle Creek, Michigan. Era um abolicionista comprometido que usava a sua propriedade como estação da 'ferrovia subterrânea' para ajudar escravos fugitivos antes da Guerra Civil Americana." },
+
+  // CATEGORIA 3: DATAS
+  { cat: "Datas Históricas", q: "Qual o significado do dia 22 de outubro de 1844?", a: "Marcou o fim da profecia das 2300 tardes e manhãs de Daniel 8:14 (o Grande Desapontamento). Baseados nos estudos de Guilherme Miller e Samuel Snow, milhares de milleritas esperavam o retorno de Jesus. Quando não aconteceu, os pioneiros voltaram a estudar as Escrituras e compreenderam que nessa data Jesus entrou no Lugar Santíssimo do santuário celestial para iniciar o juízo investigativo — tornando-se a coluna central da teologia adventista." },
+  { cat: "Datas Históricas", q: "Qual o significado do dia 21 de maio de 1863?", a: "A Igreja Adventista do Sétimo Dia foi oficialmente incorporada e a Conferência Geral organizada em Battle Creek, Michigan, com John Byington como primeiro presidente. Esta organização legal permitiu a unificação doutrinária, o sustento regular dos pastores e coordenação eficiente para a missão global, transformando o movimento num denominação estruturada." },
+  { cat: "Datas Históricas", q: "Qual a importância do ano de 1863 para a reforma de saúde adventista?", a: "Pouco após a fundação da Conferência Geral, a 6 de junho de 1863, Ellen G. White recebeu a sua primeira visão abrangente sobre saúde em Otsego, Michigan. Esta visão estabeleceu o princípio da temperança total e dos remédios naturais, tendo marcado o início do foco adventista na mensagem pró-saúde — tornando o cuidado com o corpo um dever espiritual indispensável." },
+  { cat: "Datas Históricas", q: "Qual a importância do ano de 1874 para a missão adventista mundial?", a: "Em 1874, J.N. Andrews foi enviado como o primeiro missionário oficial adventista além das fronteiras da América do Norte, indo para a Europa. Este evento marcou a transição definitiva do adventismo para um movimento com visão verdadeiramente global, abrindo caminho para o cumprimento da missão de proclamar as três mensagens angélicas 'a cada nação, tribo, língua e povo'." },
+  { cat: "Datas Históricas", q: "Qual o significado da Conferência Geral de 1888 em Minneapolis?", a: "Esta assembleia foi marcada pelas mensagens de E.J. Waggoner e A.T. Jones sobre a 'Justificação pela Fé' e a centralidade da justiça de Cristo. Após décadas de legalismo, esta conferência conseguiu um reajuste teológico crucial. Ellen White apoiou firmemente a mensagem, declarando que ela trazia o verdadeiro evangelho de volta. A Igreja recuperou o foco cristocêntrico, entendendo que a obediência é fruto do amor e da graça de Cristo." },
+  { cat: "Datas Históricas", q: "Qual o significado da reorganização de 1901 e dos incêndios de Battle Creek em 1902?", a: "Em 1901, a Conferência Geral descentralizou a Igreja através da criação das Uniões, para sustentar a rápida expansão global. Em 1902, dois grandes incêndios destruíram a editora Review and Herald e o Sanatório de Battle Creek. Foram interpretados como aviso divino contra a centralização excessiva, forçando a dispersão das instituições (incluindo mudança da sede para Washington, D.C.) e impulsionando a missão mundial." },
+  { cat: "Datas Históricas", q: "Qual o significado da reunião de Gland, Suíça, em 1907?", a: "Esta reunião representou um marco histórico e ponto de viragem para o desenvolvimento e consolidação do movimento adventista no continente europeu. Teve impacto direto na estruturação da obra missionária e administrativa na Europa, dividindo o território em campos de trabalho mais eficientes, influenciando posteriormente a expansão das missões para os territórios coloniais ultramarinos (como Portugal e as suas antigas colónias)." },
+  { cat: "Datas Históricas", q: "Qual o significado do ano de 1980 para as crenças adventistas?", a: "Durante a Conferência Geral realizada em Dallas, Texas, a Igreja adotou oficialmente o documento com as 27 Crenças Fundamentais (que em 2005 passariam a 28). Pela primeira vez na história moderna, a Igreja compilou e votou oficialmente uma declaração detalhada baseada exclusivamente nas Escrituras. O preâmbulo salvaguardou o conceito de 'verdade presente', reconhecendo que o documento pode ser revisto se o Espírito Santo guiar a Igreja a uma compreensão mais profunda." },
+  { cat: "Datas Históricas", q: "Quais as datas importantes da história adventista em Portugal?", a: "1904 — Chegada dos primeiros missionários (casal Clarence e Mary Rentfro) a Lisboa.\n1906 — Organização da primeira Igreja Adventista em Portugal (Igreja de Lisboa).\n1925 — Fundação da União Portuguesa dos Adventistas do Sétimo Dia (UPASD), tornando-se o órgão administrativo autónomo para as igrejas portuguesas." },
+
+  // CATEGORIA 4: PUBLICAÇÕES
+  { cat: "Publicações", q: "Quais as origens e o propósito da Revista Adventista (Review and Herald)?", a: "Fundada por James White em 1850 como 'The Advent Review and Sabbath Herald', resultou da fusão do 'Present Truth' (1849) e da 'Advent Review'. Foi o órgão oficial de comunicação e voz teológica central do movimento. O seu propósito era estabelecer as bases bíblicas das doutrinas (Santuário e Sábado), unificar a identidade denominacional, partilhar relatórios missionários e nutrir a fé através do estudo da 'verdade presente'." },
+  { cat: "Publicações", q: "Quais as origens e o propósito do Advent Tidende (Arauto do Advento)?", a: "Fundada em 1872 por John G. Matteson, um pioneiro adventista dinamarquês, nos EUA. Foi a primeira revista adventista publicada num idioma diferente do inglês. O seu propósito era alcançar os imigrantes escandinavos nos EUA e depois evangelizar as populações da Dinamarca, Noruega e Suécia, apresentando as verdades do sábado, do santuário e da breve vinda de Jesus a povos sem acesso a literatura adventista na sua língua." },
+  { cat: "Publicações", q: "Quais as origens e o propósito dos Sinais dos Tempos (Signs of the Times)?", a: "Fundada por James White em Oakland, Califórnia, em 1874. Tornou-se uma das publicações evangelísticas mais emblemáticas e de maior circulação, com versões equivalentes em várias divisões mundiais. É uma revista puramente missionária e evangelística, destinada ao público em geral (não-membros), analisando acontecimentos mundiais à luz das profecias bíblicas e apresentando o plano da salvação de forma acessível." },
+  { cat: "Publicações", q: "Quais as origens e o propósito da Revista Liberdade (Liberty)?", a: "Lançada originalmente em 1906 pela Conferência Geral (ligada à National Religious Liberty Association de 1889). O seu propósito é defender o princípio bíblico e constitucional da separação entre Igreja e Estado e salvaguardar a liberdade religiosa e de consciência para todas as pessoas. É distribuída intencionalmente a magistrados, políticos, advogados e líderes de opinião, promovendo a tolerância e combatendo leis que imponham a guarda do domingo." },
+  { cat: "Publicações", q: "Quais as origens e o propósito do Evangelismo Médico / Saúde e Lar?", a: "As publicações de saúde adventistas remontam às reformas iniciadas por Ellen G. White e pelo Dr. J.H. Kellogg em Battle Creek (como 'The Health Reformer'). Em Portugal, o equivalente é a revista Saúde e Lar. O seu propósito é promover a mensagem de saúde como o 'braço direito do evangelho', educar sobre os 8 remédios naturais (água, ar puro, luz solar, exercício, nutrição, temperança, repouso e confiança em Deus) e abrir corações para o evangelho." },
+  { cat: "Publicações", q: "Quais as origens e o propósito do Verdade Presente (Present Truth)?", a: "Foi a primeira publicação periódica oficial dos pioneiros adventistas. Escrita e editada por James White, a primeira edição saiu em julho de 1849, em Middletown, Connecticut. Mais tarde fundiu-se com a 'Advent Review' para dar origem à 'Review and Herald'. O seu propósito era clarificar a identidade teológica dos crentes que passaram pelo Grande Desapontamento, explicando a doutrina do santuário celestial e a imutabilidade do Sábado." },
+  { cat: "Publicações", q: "Quais as origens e o propósito do Instrutor da Juventude (The Youth's Instructor)?", a: "Fundada por James White em agosto de 1852, em Rochester, Nova Iorque. Foi a primeira publicação da Igreja dirigida especificamente às novas gerações e serviu de base para as primeiras lições de Escola Sabatina dos jovens. O seu propósito era prover alimento espiritual, lições bíblicas e leituras morais saudáveis para crianças e jovens adventistas, incentivando o desenvolvimento do caráter cristão e o compromisso com a missão da Igreja." },
+  { cat: "Publicações", q: "Quais as principais publicações equivalentes na União Portuguesa (UPASD)?", a: "• Revista Saúde e Lar — equivalente ao Evangelismo Médico, focada em saúde integral e colportagem.\n• Revista Conexão JA — focada na liderança da Juventude Adventista em Portugal (Tições, Exploradores, Companheiros, Embaixadores, Caminheiros).\n• Flashes / Boletim Informativo UPASD — canais de notícias da orgânica e missão nacional.\n• Lições da Escola Sabatina — traduzidas pela UPASD para estudo teológico diário." },
+
+  // CATEGORIA 5: ORGANIZAÇÃO
+  { cat: "Organização da Igreja", q: "Qual o significado da Conferência Geral de 1901 e que estrutura organizacional resultou dela?", a: "A CG de 1901 representou uma descentralização radical necessária para sustentar a expansão global. Criou as Uniões como intermediárias na gestão eclesiástica, estruturando a Igreja em quatro níveis: Igreja Local → Associação/Missão → União (agrupadas em Divisões) → Conferência Geral. Este modelo federativo garante que decisões operacionais sejam tomadas mais perto dos campos de trabalho, sem perder a unidade doutrinária." },
+  { cat: "Organização da Igreja", q: "Como se encaixa a UPASD na estrutura organizacional global da Igreja Adventista?", a: "A UPASD (União Portuguesa das Igrejas Adventistas do Sétimo Dia) coordena e apoia as igrejas locais e instituições em solo português. Integra-se na Divisão Inter-Europeia (EUD), que por sua vez responde perante a Conferência Geral, com sede em Silver Spring, EUA. Esta estrutura reflete o modelo adventista de liderança de serviço: Igreja Local → UPASD → Divisão Inter-Europeia → Conferência Geral." },
+  { cat: "Organização da Igreja", q: "Quais os quatro níveis da estrutura organizacional da Igreja Adventista do Sétimo Dia?", a: "1. Igreja Local — a comunidade de crentes na cidade/região.\n2. Associação ou Missão — coordena várias igrejas numa área geográfica.\n3. União — coordena várias Associações/Missões num território mais vasto; as Uniões agrupam-se em Divisões.\n4. Conferência Geral — órgão máximo da Igreja, sediado em Silver Spring, Maryland, EUA." },
+
+  // CATEGORIA 6: VÁRIOS
+  { cat: "Locais e Organizações", q: "Qual a importância do Avondale College?", a: "Estabelecido na Austrália sob a orientação direta de Ellen White, tornou-se o modelo ideal para o sistema de ensino superior adventista, integrando de forma pioneira o trabalho manual, a formação académica e o desenvolvimento espiritual — refletindo o ideal educacional da 'mente, corpo e espírito'." },
+  { cat: "Locais e Organizações", q: "Qual a importância do Battle Creek Sanitarium?", a: "Sob a liderança pioneira do Dr. John Harvey Kellogg, esta instituição médica alcançou renome mundial, tornando-se o coração da obra de saúde e da promoção dos princípios da reforma pró-saúde nos primórdios do movimento adventista. Kellogg desenvolveu ali alimentos saudáveis (como os cornflakes) e técnicas médicas avançadas." },
+  { cat: "Locais e Organizações", q: "Qual a importância do Dime Tabernacle?", a: "Construído em Battle Creek com a ajuda de doações voluntárias de moedas de dez cêntimos (dimes), este grande templo tornou-se o principal e mais emblemático ponto de encontro espiritual dos adventistas no final do século XIX, simbolizando a força das contribuições coletivas dos membros na construção da Igreja." },
+  { cat: "Locais e Organizações", q: "Qual a importância do navio missionário Pitcairn?", a: "Construído e financiado através de recolha intencional de fundos pelas Escolas Sabatinas da América do Norte, este navio representou um marco histórico na expansão adventista, levando os primeiros missionários para as ilhas do Pacífico. Simbolizou o compromisso coletivo da Igreja com a missão além-fronteiras e inspirou gerações de jovens a apoiar a obra missionária." },
+  { cat: "Locais e Organizações", q: "Qual a importância das Conferências de Sábado (Sabbath Conferences)?", a: "Realizadas entre 1848 e 1850 com a presença central de pioneiros como James White e Joseph Bates, estas reuniões de estudo e oração foram cruciais para a consolidação e a unificação das colunas teológicas da fé adventista — especialmente a doutrina do Sábado, do Santuário Celestial e da Segunda Vinda de Cristo." },
+  { cat: "Locais e Organizações", q: "Qual a importância da Sanitarium Health Food Co.?", a: "Fundada na Austrália para fins industriais e de beneficência, esta organização pioneira desempenhou papel vital na produção e difusão de alimentos saudáveis alinhados com a mensagem de saúde adventista. Tornou-se símbolo da integração entre a missão de saúde e a sustentabilidade financeira da obra evangelística." },
+  { cat: "Locais e Organizações", q: "Qual a importância do Colégio Solusi?", a: "Fundado em 1894 no Zimbábue (antiga Rodésia), em terras cedidas por Cecil Rhodes a W.H. Anderson e outros missionários, esta instituição marcou a história denominacional como a primeira grande estação missionária e colégio adventista estabelecido no continente africano. Simbolizou o compromisso adventista com a educação e a missão em África." },
+  { cat: "Locais e Organizações", q: "Qual a importância do Sistema de Benevolência (Benevolência Sistemática)?", a: "Instituído formalmente em 1859, este plano de contribuições regulares serviu de alicerce financeiro para sustentar o início do ministério e da pregação adventista. Diferente do dízimo moderno (10% fixo), baseava-se num compromisso baseado nas posses de cada crente. Foi o precursor do atual sistema de dízimo que sustenta a missão global da Igreja." },
+  { cat: "Locais e Organizações", q: "Qual a importância da Tract Society?", a: "Organização pioneira voltada para a impressão e distribuição em massa de folhetos e livros, que serviu como o motor inicial para a forte expansão da obra de publicações e evangelização literária global. Estabeleceu o princípio de que a 'página impressa' seria um veículo fundamental para a propagação da mensagem adventista a todo o mundo." },
+  { cat: "Locais e Organizações", q: "Qual a importância da Washington hand press?", a: "Prensa manual utilizada por James White para imprimir os primeiros números da revista 'The Present Truth' em 1849. Simboliza o início humilde mas corajoso do ministério de publicações da Igreja Adventista — uma única prensa manual deu origem a uma das maiores editoras religiosas do mundo." },
+
+  // CATEGORIA 7: ELLEN G. WHITE
+  { cat: "Ellen G. White", q: "Onde e quando nasceu Ellen G. White, e o que marcou a sua infância?", a: "Ellen Gould Harmon nasceu a 26 de novembro de 1827, em Gorham, Maine, numa família metodista devota. Aos nove anos, uma pedrada violenta no rosto deixou-a semanas inconsciente, desfigurando as suas feições e arruinando a sua saúde física, impossibilitando-a de prosseguir os estudos formais. Através desta fragilidade, Deus preparou-a para a missão que viria a cumprir." },
+  { cat: "Ellen G. White", q: "Quando e onde foi a primeira visão de Ellen White?", a: "Em dezembro de 1844, numa reunião de oração em Portland, Maine, Ellen experimentou a sua primeira visão. Viu o povo adventista a caminhar por um trilho estreito rumo à Nova Jerusalém, sustentado por uma luz brilhante. Esta foi a primeira de mais de duas mil visões e sonhos proféticos que receberia ao longo de setenta anos de ministério." },
+  { cat: "Ellen G. White", q: "Como Ellen White se autodenominava e qual foi o seu papel nos primórdios da Igreja?", a: "Ellen White nunca reivindicou o título de 'profetiza', preferindo autodenominar-se 'mensageira do Senhor'. O seu papel foi multifacetado: atuou como conselheira teológica, admoestou líderes desviados, impulsionou as áreas da saúde, colportagem e educação, e manteve o foco cristocêntrico na justificação pela fé. As suas visões eram subordinadas à autoridade suprema da Bíblia." },
+  { cat: "Ellen G. White", q: "O que aconteceu em Lovett Grove, Ohio, em 1858?", a: "Em março de 1858, durante uma reunião fúnebre em Lovett Grove, Ohio, Ellen White foi arrebatada em visão durante duas horas. Abriu-se diante dos seus olhos o vasto panorama do conflito cósmico entre Cristo e Satanás, desde a rebelião de Lúcifer no Céu até ao triunfo final dos remidos na Nova Terra. Foi-lhe dada a instrução de escrever o que vira, originando a série 'Conflito dos Séculos'." },
+  { cat: "Ellen G. White", q: "Qual o significado de 6 de junho de 1863 para Ellen White?", a: "Na casa de Otsego, Michigan, Ellen G. White recebeu a sua primeira visão abrangente sobre a saúde e a reforma pró-saúde. Foi-lhe revelado que o cuidado com o corpo (temperança, alimentação saudável, água pura, ar livre) era um dever espiritual ligado à santificação. Esta visão estabeleceu a base para o desenvolvimento do sistema médico e de saúde adventista mundial." },
+  { cat: "Ellen G. White", q: "O que foram os 'Testemunhos para a Igreja' de Ellen White?", a: "Uma compilação de cartas, artigos e orientações inspiradas dadas a indivíduos e à comunidade de crentes, publicados originalmente em pequenos panfletos a partir de 1855. Cobriam conselhos familiares, finanças, administração eclesiástica e advertências contra o pecado. Os 'Testemunhos' serviram como bússola moral e espiritual, moldando a identidade e a unidade doutrinária da Igreja." },
+  { cat: "Ellen G. White", q: "O que foi 'Sunnyside' e qual o seu significado?", a: "'Sunnyside' foi a residência de Ellen White em Cooranbong, Austrália, onde viveu a partir de 1891. Respondendo a um apelo missionário, ela partiu para a Austrália onde teve papel vital no estabelecimento do Avondale College. A sua casa tornou-se um refúgio de hospitalidade, onde escrevia nas primeiras horas da madrugada e partilhava os seus recursos com necessitados e estudantes pobres." },
+  { cat: "Ellen G. White", q: "O que foi 'Elmshaven' e qual o seu significado?", a: "'Elmshaven' foi a residência de Ellen White em Saint Helena, Califórnia, para onde regressou dos EUA em 1900. Esta residência serena foi o palco dos seus últimos quinze anos de vida e labor intelectual. A partir de 'Elmshaven', lançou os seus apelos finais de advertência e reavivamento espiritual à liderança da Igreja. A 16 de julho de 1915, aí descansou no Senhor, pronunciando as suas últimas palavras: 'Sei em quem tenho crido'." },
+  { cat: "Ellen G. White", q: "O que é a Ellen G. White Estate, Inc.?", a: "Organização criada por disposição testamentária de Ellen White para a custódia permanente do seu vasto legado literário. Com sede na Conferência Geral, tem como missão preservar os manuscritos originais, supervisionar traduções dos seus livros para centenas de línguas e compilar novas obras com base nos seus diários e cartas. Assegura que a voz da mensageira do Senhor continue a ressoar com integridade." },
+  { cat: "Ellen G. White", q: "O que é a obra 'O Grande Conflito' (Spirit of Prophecy) de Ellen White?", a: "A obra-prima histórica e profética de Ellen White, expandida a partir da visão de Lovett Grove. Traça cronologicamente a apostasia e a fidelidade cristã: desde a destruição de Jerusalém, mártires das catacumbas, valdenses, reformadores como Lutero e Huss, o reavivamento millerita e o juízo investigativo de 1844, até à erradicação final do pecado. É um livro indispensável para decifrar a história humana sob a ótica do grande conflito." },
+
+  // CATEGORIA 8: ADVENTISMO EM PORTUGAL
+  { cat: "Adventismo em Portugal", q: "Como começou o adventismo em Portugal?", a: "Em 1904, o casal Clarence e Mary Rentfro chegou a Lisboa como os primeiros missionários adventistas a Portugal, dando início oficial à pregação organizada da mensagem adventista em território português. Em 1906 foi formalmente organizada a primeira Igreja Adventista — a Igreja de Lisboa. Em 1925 foi fundada a União Portuguesa dos Adventistas do Sétimo Dia (UPASD), tornando-se o órgão administrativo autónomo." },
+  { cat: "Adventismo em Portugal", q: "O que é a UPASD e em que estrutura global se insere?", a: "A União Portuguesa das Igrejas Adventistas do Sétimo Dia (UPASD) é o órgão administrativo e espiritual que coordena as igrejas locais e instituições em solo português. Insere-se na Divisão Inter-Europeia (EUD), que responde perante a Conferência Geral em Silver Spring, EUA. A UPASD é o elo vital entre as igrejas locais portuguesas e a missão global da denominação." },
+  { cat: "Adventismo em Portugal", q: "Quais as origens do Ministério de Jovens (JA) e como se relaciona com os clubes de Desbravadores?", a: "Em 1879, Luther Warren (14 anos) e Harry Fenner fundaram a primeira Sociedade de Jovens em Hazelton, Michigan. Este passo é reconhecido como o nascimento oficial do Ministério de Jovens (JA). Com o tempo, este ministério originou os clubes de Tições (crianças mais novas), Exploradores (pré-adolescentes), Desbravadores (adolescentes), Companheiros, Embaixadores e Caminheiros — a estrutura de juventude adventista mundial." }
+];
+
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+const STATE_KEY = 'sda_flashcards_v3';
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch { return {}; }
+}
+function saveState(s) { localStorage.setItem(STATE_KEY, JSON.stringify(s)); }
+
+let state = loadState();
+// state.hidden = Set of card indices that are hidden (correct)
+if (!state.hidden) state.hidden = [];
+
+// Categories
+const allCats = [...new Set(cards.map(c => c.cat))];
+
+// Deck: indices of cards currently in play
+let deck = [];
+let deckIdx = 0;
+let showingAnswer = false;
+let selectedCats = new Set(allCats);
+
+// ──────────────────────────────────────────────
+// MENU
+// ──────────────────────────────────────────────
+function renderMenu() {
+  const hidden = new Set(state.hidden || []);
+  const total = cards.length;
+  const done = hidden.size;
+  const inDeck = total - done;
+
+  document.getElementById('stat-total').textContent = inDeck;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-pct').textContent = Math.round(done / total * 100) + '%';
+
+  const catList = document.getElementById('cat-list');
+  catList.innerHTML = '';
+  allCats.forEach(cat => {
+    const catCards = cards.filter(c => c.cat === cat);
+    const catTotal = catCards.length;
+    const catDone = catCards.filter((c, i) => hidden.has(cards.indexOf(c))).length;
+    const catLeft = catTotal - catDone;
+
+    const item = document.createElement('div');
+    item.className = 'category-item' + (selectedCats.has(cat) ? ' selected' : '');
+    item.innerHTML = `
+      <input type="checkbox" ${selectedCats.has(cat) ? 'checked' : ''}>
+      <div class="cat-info">
+        <div class="cat-name">${cat}</div>
+        <div class="cat-count">${catLeft} em deck · ${catDone} acertadas</div>
+      </div>
+      <div class="cat-badge">${catTotal} cartas</div>
+    `;
+    const cb = item.querySelector('input');
+    item.addEventListener('click', () => {
+      cb.checked = !cb.checked;
+      if (cb.checked) { selectedCats.add(cat); item.classList.add('selected'); }
+      else { selectedCats.delete(cat); item.classList.remove('selected'); }
+      updateStartBtn();
+    });
+    cb.addEventListener('click', e => e.stopPropagation());
+    catList.appendChild(item);
+  });
+
+  updateStartBtn();
+  checkCompleted();
+}
+
+function updateStartBtn() {
+  const hidden = new Set(state.hidden || []);
+  const available = cards.filter((c, i) => selectedCats.has(c.cat) && !hidden.has(i));
+  document.getElementById('btn-start').disabled = available.length === 0;
+  document.getElementById('btn-start').textContent = available.length === 0
+    ? 'Sem cartas disponíveis'
+    : `Estudar (${available.length} carta${available.length !== 1 ? 's' : ''})`;
+}
+
+function checkCompleted() {
+  const hidden = new Set(state.hidden || []);
+  if (hidden.size === cards.length) {
+    showScreen('completed');
+  }
+}
+
+// ──────────────────────────────────────────────
+// GAME
+// ──────────────────────────────────────────────
+function startGame() {
+  const hidden = new Set(state.hidden || []);
+  deck = cards
+    .map((c, i) => i)
+    .filter(i => selectedCats.has(cards[i].cat) && !hidden.has(i));
+
+  // Shuffle
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  deckIdx = 0;
+  showScreen('game');
+  loadCard();
+}
+
+function loadCard() {
+  if (deckIdx >= deck.length) {
+    // Finished this session
+    renderMenu();
+    showScreen('menu');
+    return;
+  }
+
+  showingAnswer = false;
+  const idx = deck[deckIdx];
+  const card = cards[idx];
+
+  document.getElementById('card-type').textContent = card.cat;
+  document.getElementById('cur-cat').textContent = card.cat;
+  document.getElementById('card-question').textContent = card.q;
+  document.getElementById('answer-text').textContent = card.a;
+  document.getElementById('card-answer').style.display = 'none';
+  document.getElementById('tap-hint').style.display = '';
+
+  const total = deck.length;
+  const cur = deckIdx + 1;
+  const pct = ((deckIdx) / total * 100).toFixed(0);
+
+  document.getElementById('prog-text').textContent = `Carta ${cur} de ${total}`;
+  document.getElementById('prog-remain').textContent = `${total - deckIdx} restantes`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('animate-in');
+  void fc.offsetWidth;
+  fc.classList.add('animate-in');
+
+  setActionState('question');
+}
+
+function revealAnswer() {
+  if (showingAnswer) return;
+  showingAnswer = true;
+  document.getElementById('card-answer').style.display = '';
+  document.getElementById('tap-hint').style.display = 'none';
+  setActionState('answer');
+  document.getElementById('flashcard').scrollTop = 0;
+}
+
+function setActionState(mode) {
+  const area = document.getElementById('action-area');
+  if (mode === 'question') {
+    area.innerHTML = `<button class="btn btn-show" id="btn-show">Ver Resposta</button>`;
+    document.getElementById('btn-show').addEventListener('click', revealAnswer);
+  } else {
+    area.innerHTML = `
+      <button class="btn btn-wrong" id="btn-wrong">✗ Errei</button>
+      <button class="btn btn-correct" id="btn-correct">✓ Acertei — Esconder</button>
+    `;
+    document.getElementById('btn-wrong').addEventListener('click', markWrong);
+    document.getElementById('btn-correct').addEventListener('click', markCorrect);
+  }
+}
+
+function markCorrect() {
+  const idx = deck[deckIdx];
+  if (!state.hidden) state.hidden = [];
+  if (!state.hidden.includes(idx)) state.hidden.push(idx);
+  saveState(state);
+  deckIdx++;
+  if (deckIdx >= deck.length || state.hidden.length === cards.length) {
+    if (state.hidden.length === cards.length) {
+      showScreen('completed');
+    } else {
+      renderMenu();
+      showScreen('menu');
+    }
+  } else {
+    loadCard();
+  }
+}
+
+function markWrong() {
+  // Keep in deck — move to end so it comes back
+  const idx = deck[deckIdx];
+  deck.push(idx);
+  deckIdx++;
+  loadCard();
+}
+
+// ──────────────────────────────────────────────
+// SCREENS
+// ──────────────────────────────────────────────
+function showScreen(name) {
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('completed').style.display = 'none';
+
+  if (name === 'menu') { document.getElementById('menu').style.display = 'flex'; renderMenu(); }
+  if (name === 'game') document.getElementById('game').style.display = 'flex';
+  if (name === 'completed') document.getElementById('completed').style.display = 'flex';
+}
+
+// ──────────────────────────────────────────────
+// EVENT LISTENERS
+// ──────────────────────────────────────────────
+document.getElementById('btn-start').addEventListener('click', startGame);
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (confirm('Repor todas as cartas no deck? O teu progresso será apagado.')) {
+    state.hidden = [];
+    saveState(state);
+    renderMenu();
+  }
+});
+
+document.getElementById('btn-back').addEventListener('click', () => {
+  renderMenu();
+  showScreen('menu');
+});
+
+// Tap card to reveal
+document.getElementById('flashcard').addEventListener('click', (e) => {
+  if (!showingAnswer && !e.target.closest('button')) revealAnswer();
+});
+
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state.hidden = [];
+  saveState(state);
+  showScreen('menu');
+  renderMenu();
+});
+
+document.getElementById('btn-menu-from-complete').addEventListener('click', () => {
+  showScreen('menu');
+  renderMenu();
+});
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+showScreen('menu');
+</script>
+</body>
+</html>
